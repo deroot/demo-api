@@ -62,7 +62,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.error("Api Error Request: {}", error);
 
-        return super.handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
+        return super.handleExceptionInternal(ex, error, headers, error.getStatus(), request);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.error("Api Error Request: {}", error);
 
-        return super.handleExceptionInternal(ex, error, headers, HttpStatus.BAD_REQUEST, request);
+        return super.handleExceptionInternal(ex, error, headers, error.getStatus(), request);
     }
 
 
@@ -117,7 +117,21 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         log.error("Api Error Request: {}", error);
 
-        return super.handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+        return super.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
+    }
+
+
+    // default
+
+    @ExceptionHandler({ Exception.class })
+    public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .message(ex.getLocalizedMessage())
+                .build();
+
+        return super.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
+
     }
 
 }
