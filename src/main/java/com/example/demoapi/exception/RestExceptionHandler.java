@@ -130,6 +130,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 .message(ex.getLocalizedMessage())
                 .build();
 
+        error.getErrors().add("Error occurred");
+
         return super.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
 
     }
