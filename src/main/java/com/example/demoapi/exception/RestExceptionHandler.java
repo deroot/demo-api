@@ -119,6 +119,23 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         return super.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
     }
+    
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleHttpConstraintViolationException(ConstraintViolationException ex, final WebRequest request) {
+        String[] split = ex.getMessage().split(", ");
+        List messages = Arrays.asList(split);
+
+        ApiErrorResponse error = ApiErrorResponse.builder()
+                .status(HttpStatus.BAD_REQUEST)
+                .message(ex.getLocalizedMessage())
+                .build();
+
+        error.setErrors(messages);
+
+        log.error("Api Error Request: {}", error);
+
+        return super.handleExceptionInternal(ex, error, new HttpHeaders(), error.getStatus(), request);
+    }
 
 
     // default
